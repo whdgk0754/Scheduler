@@ -6,6 +6,7 @@ import org.example.domain.Availability;
 import org.example.domain.Employee;
 import org.example.domain.Shift;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,10 +19,15 @@ import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SchedulingServiceTest {
+
+    Employee employee;
+    Shift shift;
+    LocalDate date;
 
     @Mock
     AvailabilityService availabilityService;
@@ -33,13 +39,18 @@ public class SchedulingServiceTest {
     @InjectMocks
     SchedulingService schedulingService;
 
+    @BeforeEach
+    void setUp(){
+        employee = new Employee();
+        shift = new Shift();
+        date = LocalDate.of(2026, 10, 21);
+        shift.setDate(date);
+    }
    @Test
    void notEligible_returnFalse(){
-       Employee employee = new Employee();
-       Shift shift = new Shift();
+
        Availability availability = new Availability();
-       LocalDate date = LocalDate.of(2026, 10,21);
-       shift.setDate(date);
+
        availability.setAvailability(false);
 
        when(availabilityService.getByEmployeeAndDay(employee, date.getDayOfWeek()))
@@ -54,10 +65,7 @@ public class SchedulingServiceTest {
 
    @Test
     void exceedMaxhour_returnFalse(){
-       Employee employee = new Employee();
-       Shift shift = new Shift();
-       LocalDate date = LocalDate.of(2026, 10, 21);
-       shift.setDate(date);
+
        LocalDate weekStart = date.with(DayOfWeek.MONDAY);
        LocalDate weekEnd = weekStart.plusDays(6);
        employee.setMaxHour(25L);
@@ -75,5 +83,45 @@ public class SchedulingServiceTest {
    }
 
 
+   @Test
+    void exactlyMaxhour_returnTrue(){
+
+       LocalDate weekStart = date.with(DayOfWeek.MONDAY);
+       LocalDate weekEnd = weekStart.plusDays(6);
+       Long assignedMinutes = 1380L;
+       employee.setMaxHour(25L);
+
+       when(scheduleService.getAssignedMinutes(employee, weekStart, weekEnd)
+               ).thenReturn(assignedMinutes);
+
+       shift.setStartTime((LocalTime.of(10,0)));
+       shift.setEndTime(LocalTime.of(12,0));
+
+       boolean result = schedulingService.isEligible(employee, shift);
+       assertTrue(result);
+   }
+
+    @Test
+    void SeniorRequireANDnotSenior_returnFalse(){
+
+
+        shift.setNeedSenior(true);
+        employee.setSenior(false);
+
+        boolean result = schedulingService.isEligible(employee, shift);
+        assertFalse(result);
+
+    }
+
+    @Test
+    void SeniorRequireANDisSenior_returnTrue(){
+
+
+        shift.setNeedSenior(true);
+        employee.setSenior(true);
+
+        boolean result = schedulingService.isEligible(employee, shift);
+        assertTrue(result);
+    }
 
 }

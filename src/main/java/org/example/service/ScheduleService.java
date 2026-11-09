@@ -7,6 +7,7 @@ import org.example.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,7 +26,9 @@ public class ScheduleService {
         return scheduleRepository.findByEmployeeAndShift_DateBetween(employee, weekStart, weekEnd);
     }
 
-    public Long getAssignedMinutes(Employee employee, LocalDate weekStart, LocalDate weekEnd){
+    public Long getAssignedMinutes(Employee employee, LocalDate date){
+        LocalDate weekStart = date.with(DayOfWeek.MONDAY);
+        LocalDate weekEnd = weekStart.plusDays(6);
         List<Schedule> assignedSchedule = getByEmployeeAndWeek(employee, weekStart, weekEnd);
         long sumOfMinutes = 0;
 
@@ -38,5 +41,10 @@ public class ScheduleService {
 
 
 
+    }
+
+
+    public Schedule saveSchedule(Schedule schedule){
+        return scheduleRepository.save(schedule);
     }
 }

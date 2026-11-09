@@ -66,16 +66,15 @@ public class SchedulingServiceTest {
    @Test
     void exceedMaxhour_returnFalse(){
 
-       LocalDate weekStart = date.with(DayOfWeek.MONDAY);
-       LocalDate weekEnd = weekStart.plusDays(6);
+
        employee.setMaxHour(25L);
        Long assignedMinutes = 1380L;
 
-       when(scheduleService.getAssignedMinutes(employee, weekStart, weekEnd))
+       when(scheduleService.getAssignedMinutes(employee,date))
                .thenReturn(assignedMinutes);
 
-       shift.setStartTime((LocalTime.of(10,0)));
-       shift.setEndTime(LocalTime.of(15,0));
+       shift.setStartTime((date.atTime(10,0)));
+       shift.setEndTime(date.atTime(15,0));
 
 
        boolean result = schedulingService.isEligible(employee, shift);
@@ -86,16 +85,15 @@ public class SchedulingServiceTest {
    @Test
     void exactlyMaxhour_returnTrue(){
 
-       LocalDate weekStart = date.with(DayOfWeek.MONDAY);
-       LocalDate weekEnd = weekStart.plusDays(6);
+
        Long assignedMinutes = 1380L;
        employee.setMaxHour(25L);
 
-       when(scheduleService.getAssignedMinutes(employee, weekStart, weekEnd)
+       when(scheduleService.getAssignedMinutes(employee, date)
                ).thenReturn(assignedMinutes);
 
-       shift.setStartTime((LocalTime.of(10,0)));
-       shift.setEndTime(LocalTime.of(12,0));
+       shift.setStartTime((date.atTime(10,0)));
+       shift.setEndTime(date.atTime(12,0));
 
        boolean result = schedulingService.isEligible(employee, shift);
        assertTrue(result);

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalTime;
 
 import java.time.LocalDateTime;
 
@@ -23,8 +24,9 @@ public class Schedule {
     @ManyToOne
     private Shift shift;
 
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+//    /when schedule can be assigned working time by itself
+    //private LocalTime startTime;
+    //private LocalTime endTime;
 
 
 

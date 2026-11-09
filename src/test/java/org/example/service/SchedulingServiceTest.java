@@ -73,8 +73,8 @@ public class SchedulingServiceTest {
        when(scheduleService.getAssignedMinutes(employee,date))
                .thenReturn(assignedMinutes);
 
-       shift.setStartTime((date.atTime(10,0)));
-       shift.setEndTime(date.atTime(15,0));
+       shift.setStartTime((LocalTime.of(10,0)));
+       shift.setEndTime(LocalTime.of(15,0));
 
 
        boolean result = schedulingService.isEligible(employee, shift);
@@ -92,8 +92,8 @@ public class SchedulingServiceTest {
        when(scheduleService.getAssignedMinutes(employee, date)
                ).thenReturn(assignedMinutes);
 
-       shift.setStartTime((date.atTime(10,0)));
-       shift.setEndTime(date.atTime(12,0));
+       shift.setStartTime((LocalTime.of(10,0)));
+       shift.setEndTime(LocalTime.of(12,0));
 
        boolean result = schedulingService.isEligible(employee, shift);
        assertTrue(result);

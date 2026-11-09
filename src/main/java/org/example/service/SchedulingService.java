@@ -50,7 +50,7 @@ public class SchedulingService {
                 long sumOfMinutes = (scheduleService.getAssignedMinutes(employee, date));
 
                 //compare the limit on max hour (should be discussed if employee has no limit on max hour
-                if (sumOfMinutes + (Duration.between(shift.getStartTime(), shift.getEndTime()).toMinutes()) > (maxHour * 60)) {
+                if (sumOfMinutes + shift.calculateMinutes() > (maxHour * 60)) {
                     return false;
                 }
             }
@@ -93,8 +93,7 @@ public class SchedulingService {
         Schedule schedule = new Schedule();
         schedule.setEmployee(suitableEmployee);
         schedule.setShift(shift);
-        schedule.setStartTime(shift.getStartTime());
-        schedule.setEndTime(shift.getEndTime());
+
 
         Schedule savedSchedule =scheduleService.saveSchedule(schedule);
         return Optional.of(savedSchedule);

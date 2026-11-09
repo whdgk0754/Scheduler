@@ -33,8 +33,9 @@ public class ScheduleService {
         long sumOfMinutes = 0;
 
         for(Schedule s : assignedSchedule){
-            Duration d = Duration.between(s.getStartTime(), s.getEndTime());
-            sumOfMinutes += d.toMinutes();
+           long currentMinutes = s.getShift().calculateMinutes();
+
+            sumOfMinutes += currentMinutes;
         }
 
         return sumOfMinutes;

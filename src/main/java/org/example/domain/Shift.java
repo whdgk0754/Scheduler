@@ -1,5 +1,6 @@
 package org.example.domain;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,14 +24,24 @@ public class Shift {
 
     private LocalDate date;
 
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
+
+    private static final long dayToMinutes = 1440;
 
     private Integer requiredHeadCount;
 
     private boolean needSenior;
 
+    public long calculateMinutes(){
 
+        
+        long minutes = Duration.between(startTime, endTime).toMinutes();
+        if(minutes<0){
+            return minutes+dayToMinutes;
+        }
+        return minutes;
+    }
 
 
 }

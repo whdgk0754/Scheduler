@@ -2,7 +2,6 @@ package org.example.domain;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +34,7 @@ public class Shift {
 
     public long calculateMinutes(){
 
-        
+
         long minutes = Duration.between(startTime, endTime).toMinutes();
         if(minutes<0){
             return minutes+dayToMinutes;

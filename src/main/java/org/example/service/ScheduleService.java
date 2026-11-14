@@ -5,10 +5,9 @@ import org.example.domain.Employee;
 import org.example.domain.Schedule;
 import org.example.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
-
+import org.example.domain.Shift;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -48,4 +47,6 @@ public class ScheduleService {
     public Schedule saveSchedule(Schedule schedule){
         return scheduleRepository.save(schedule);
     }
+
+    public boolean existsByShift(Shift shift){return scheduleRepository.existsByShift(shift);}
 }

@@ -13,6 +13,8 @@ import javax.swing.text.html.Option;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class SchedulingService {
 
     private final AvailabilityService availabilityService;
+    private final ShiftService shiftService;
     private final ScheduleService scheduleService;
     private final EmployeeService employeeService;
 
@@ -64,7 +67,14 @@ public class SchedulingService {
 
     public Optional<Schedule> autoAssign(Shift shift){
 
+        if(scheduleService.existsByShift(shift)){
+            return Optional.empty();
+        }
+
         List<Employee> employeeList = employeeService.getAllEmployee();
+
+
+
 
         Employee suitableEmployee = null;
         long employeeMinutes = Long.MAX_VALUE;
@@ -95,9 +105,43 @@ public class SchedulingService {
         schedule.setShift(shift);
 
 
-        Schedule savedSchedule =scheduleService.saveSchedule(schedule);
+        Schedule savedSchedule = scheduleService.saveSchedule(schedule);
         return Optional.of(savedSchedule);
     }
+
+    public List<Schedule> autoAssignWeek(LocalDate date ){
+
+        List<Schedule> scheduleList = new ArrayList<>();
+        List<Shift> shiftList;
+        LocalDate weekStart = date.with(DayOfWeek.MONDAY);
+        LocalDate weekEnd = weekStart.plusDays(6);
+        shiftList = shiftService.getShiftsBetweenDate(weekStart, weekEnd);
+        Schedule schedule;
+
+
+        shiftList.sort(Comparator.comparing(Shift::isNeedSenior).reversed());
+
+        for(Shift s : shiftList) {
+
+            Optional<Schedule> scheduleOptional = autoAssign(s);
+
+            if (scheduleOptional.isPresent()) {
+                schedule = scheduleOptional.get();
+
+                scheduleList.add(schedule);
+
+
+
+            }
+        }
+
+
+
+
+
+        return scheduleList;
+    }
+
 
 
 }
